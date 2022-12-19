@@ -4,7 +4,7 @@ namespace Supermetrolog\SynchronizerFilesystemSourceRepo;
 
 use Generator;
 use LogicException;
-use Supermetrolog\Synchronizer\services\sync\interfaces\StreamInterface;
+use Supermetrolog\Synchronizer\interfaces\StreamInterface;
 use Supermetrolog\SynchronizerFilesystemSourceRepo\path\AbsPath;
 use Supermetrolog\SynchronizerFilesystemSourceRepo\path\RelPath;
 

@@ -3,7 +3,7 @@
 namespace Supermetrolog\SynchronizerFilesystemSourceRepo;
 
 use InvalidArgumentException;
-use Supermetrolog\Synchronizer\services\sync\interfaces\FileInterface;
+use Supermetrolog\Synchronizer\interfaces\FileInterface;
 use Supermetrolog\SynchronizerFilesystemSourceRepo\path\RelPath;
 
 class File implements FileInterface

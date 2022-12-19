@@ -1,8 +1,8 @@
 <?php
 
 use PHPUnit\Framework\TestCase;
-use Supermetrolog\Synchronizer\services\sync\interfaces\FileInterface;
-use Supermetrolog\Synchronizer\services\sync\interfaces\StreamInterface;
+use Supermetrolog\Synchronizer\interfaces\FileInterface;
+use Supermetrolog\Synchronizer\interfaces\StreamInterface;
 use Supermetrolog\SynchronizerFilesystemSourceRepo\Filesystem;
 use Supermetrolog\SynchronizerFilesystemSourceRepo\FilesystemRepository;
 use Supermetrolog\SynchronizerFilesystemSourceRepo\path\AbsPath;

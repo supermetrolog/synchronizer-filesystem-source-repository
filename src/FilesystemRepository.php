@@ -3,9 +3,9 @@
 namespace Supermetrolog\SynchronizerFilesystemSourceRepo;
 
 use InvalidArgumentException;
-use Supermetrolog\Synchronizer\services\sync\interfaces\FileInterface;
-use Supermetrolog\Synchronizer\services\sync\interfaces\SourceRepositoryInterface;
-use Supermetrolog\Synchronizer\services\sync\interfaces\StreamInterface;
+use Supermetrolog\Synchronizer\interfaces\FileInterface;
+use Supermetrolog\Synchronizer\interfaces\SourceRepositoryInterface;
+use Supermetrolog\Synchronizer\interfaces\StreamInterface;
 use Supermetrolog\SynchronizerFilesystemSourceRepo\path\AbsPath;
 
 class FilesystemRepository implements SourceRepositoryInterface
