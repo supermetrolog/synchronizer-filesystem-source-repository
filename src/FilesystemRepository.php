@@ -15,15 +15,13 @@ class FilesystemRepository implements SourceRepositoryInterface
 
     public function __construct(AbsPath $baseDirectoryPath, Filesystem $filesystem)
     {
-        if (!$baseDirectoryPath)
-            throw new InvalidArgumentException("invalid base directory path");
-        if (!file_exists($baseDirectoryPath))
+        $this->filesystem = $filesystem;
+        if (!$this->filesystem->fileExists($baseDirectoryPath))
             throw new InvalidArgumentException("base directory with path: $baseDirectoryPath not exist");
-        if (!is_dir($baseDirectoryPath))
+        if (!$this->filesystem->isDir($baseDirectoryPath))
             throw new InvalidArgumentException("base dir path is not directory");
 
         $this->baseDirectoryPath = $baseDirectoryPath;
-        $this->filesystem = $filesystem;
     }
 
     public function getStream(): StreamInterface
@@ -33,13 +31,10 @@ class FilesystemRepository implements SourceRepositoryInterface
     public function getContent(FileInterface $file): ?string
     {
         $filename = $this->baseDirectoryPath->addRelativePath($file->getUniqueName());
-
-        if (!$this->filesystem->fileExists($filename)) {
+        try {
+            return $this->filesystem->getContent($filename);
+        } catch (\Throwable $th) {
             return null;
         }
-        if ($this->filesystem->isDir($filename)) {
-            return null;
-        }
-        return $this->filesystem->getContent($filename);
     }
 }

@@ -24,12 +24,12 @@ class Filesystem
      */
     public function getContent(string $filename): ?string
     {
-        if ($this->isDir($filename)) {
-            throw new InvalidArgumentException("File is directory. Directory not have content");
-        }
-
         if (!$this->fileExists($filename)) {
             throw new InvalidArgumentException("File not found, filename: \"$filename\" ");
+        }
+
+        if ($this->isDir($filename)) {
+            throw new InvalidArgumentException("File is directory. Directory not have content");
         }
 
         $content = file_get_contents($filename);
@@ -62,7 +62,7 @@ class Filesystem
     {
         closedir($handle);
     }
-    public function hashFile(string $algo, $filename): string
+    public function hashFile(string $algo, string $filename): string
     {
         if ($this->isDir($filename)) {
             throw new InvalidArgumentException("File is directory. Directory not have hash");

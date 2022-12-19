@@ -15,7 +15,6 @@ class StreamTest extends TestCase
 
     public function setUp(): void
     {
-        $this->root = vfsStream::setup();
         $this->filesystem = new Filesystem();
 
         $this->generateFiles();
@@ -24,6 +23,7 @@ class StreamTest extends TestCase
     private function generateFiles(): void
     {
 
+        $this->root = vfsStream::setup();
         $dir1 = vfsStream::newDirectory("dir1");
         $dir1->addChild(vfsStream::newFile("file1.txt")->setContent("fuck the police"));
         $dir1->addChild(vfsStream::newFile("file2.txt")->setContent("fuck the police suka"));
