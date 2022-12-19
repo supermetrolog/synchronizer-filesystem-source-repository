@@ -1,0 +1,25 @@
+{
+    "name": "supermetrolog/synchronizer-filesystem-source-repo",
+    "description": "Source repository implementation",
+    "type": "library",
+    "license": "MIT",
+    "scripts": {
+        "test": "./vendor/bin/phpunit -c phpunit.xml"
+    },
+    "autoload": {
+        "psr-4": {
+            "Supermetrolog\\SynchronizerFilesystemSourceRepo\\": "src/"
+        }
+    },
+    "authors": [{
+        "name": "supermetrolog",
+        "email": "billypro6@gmail.com"
+    }],
+    "require": {
+        "supermetrolog/synchronizer": "^1.0"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "^9.5",
+        "mikey179/vfsstream": "^1.6"
+    }
+}
