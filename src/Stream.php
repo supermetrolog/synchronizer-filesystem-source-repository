@@ -8,22 +8,21 @@ use Supermetrolog\Synchronizer\interfaces\StreamInterface;
 use Supermetrolog\SynchronizerFilesystemSourceRepo\path\AbsPath;
 use Supermetrolog\SynchronizerFilesystemSourceRepo\path\RelPath;
 
-/**
- * @property resource $lastHandle
- */
 class Stream implements StreamInterface
 {
     private AbsPath $dirpath;
     private Filesystem $filesystem;
 
+    /** @var resource $lastHandle */
     private $lastHandle;
+
     public function __construct(AbsPath $dirpath, Filesystem $filesystem)
     {
         $this->dirpath = $dirpath;
         $this->filesystem = $filesystem;
     }
     /**
-     * @return File[]
+     * @return Generator<File>
      */
     public function read(): Generator
     {
@@ -34,7 +33,6 @@ class Stream implements StreamInterface
         $handle = $this->filesystem->openDir($dirpath);
         $this->lastHandle = &$handle;
         while ($filename = $this->filesystem->readDir($handle)) {
-
             $file = $this->createFile($filename, $dirpath, $parent);
             if (
                 $file->isDir() &&
@@ -60,7 +58,11 @@ class Stream implements StreamInterface
     }
     private function createFile(string $filename, AbsPath $dirpath, ?File $parent): File
     {
-        $relPath = new RelPath(str_replace($this->dirpath, "", $dirpath));
+        $relPath = str_replace($this->dirpath, "", $dirpath);
+        if (!is_string($relPath)) {
+            throw new LogicException("str_replace return not string value");
+        }
+        $relPath = new RelPath($relPath);
         $fullpath = $this->dirpath . $relPath . $filename;
         $isDir = $this->filesystem->isDir($fullpath);
         $hash = "";
@@ -77,7 +79,8 @@ class Stream implements StreamInterface
 
     public function __destruct()
     {
-        if ($this->filesystem->isResource($this->lastHandle))
+        if ($this->filesystem->isResource($this->lastHandle)) {
             $this->filesystem->closeDir($this->lastHandle);
+        }
     }
 }

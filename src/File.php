@@ -8,7 +8,6 @@ use Supermetrolog\SynchronizerFilesystemSourceRepo\path\RelPath;
 
 class File implements FileInterface
 {
-
     private const CURRENT_DIR_POINTER = ".";
     private const PREVENT_DIR_POINTER = "..";
 

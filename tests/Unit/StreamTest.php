@@ -1,11 +1,14 @@
 <?php
 
+namespace tests\unit;
+
 use org\bovigo\vfs\vfsStream;
 use org\bovigo\vfs\vfsStreamDirectory;
 use PHPUnit\Framework\TestCase;
 use Supermetrolog\SynchronizerFilesystemSourceRepo\Filesystem;
 use Supermetrolog\SynchronizerFilesystemSourceRepo\path\AbsPath;
 use Supermetrolog\SynchronizerFilesystemSourceRepo\Stream;
+use Supermetrolog\Synchronizer\interfaces\FileInterface;
 
 class StreamTest extends TestCase
 {
@@ -58,7 +61,10 @@ class StreamTest extends TestCase
 
         $this->assertEquals("/dir1/dir1_1/file1_1.jpg", $files[2]->getUniqueName());
         $this->assertFalse($files[2]->isDir());
-        $this->assertEquals(hash_file("md5", $this->root->getChild('dir1/dir1_1/file1_1.jpg')->url()), $files[2]->getHash());
+        $this->assertEquals(
+            hash_file("md5", $this->root->getChild('dir1/dir1_1/file1_1.jpg')->url()),
+            $files[2]->getHash()
+        );
 
         $this->assertEquals("/dir1/dir1_1", $files[3]->getUniqueName());
         $this->assertTrue($files[3]->isDir());
@@ -74,6 +80,9 @@ class StreamTest extends TestCase
 
         $this->assertEquals("/file_suka.txt", $files[7]->getUniqueName());
         $this->assertFalse($files[7]->isDir());
-        $this->assertEquals(hash_file("md5", $this->root->getChild('file_suka.txt')->url()), $files[7]->getHash());
+        $this->assertEquals(
+            hash_file("md5", $this->root->getChild('file_suka.txt')->url()),
+            $files[7]->getHash()
+        );
     }
 }

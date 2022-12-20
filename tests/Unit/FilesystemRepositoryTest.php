@@ -1,7 +1,11 @@
 <?php
 
+namespace tests\unit;
+
+use InvalidArgumentException;
 use org\bovigo\vfs\vfsStream;
 use org\bovigo\vfs\vfsStreamDirectory;
+use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Supermetrolog\Synchronizer\interfaces\FileInterface;
 use Supermetrolog\Synchronizer\interfaces\StreamInterface;
@@ -27,27 +31,30 @@ class FilesystemRepositoryTest extends TestCase
 
     public function testConstructor(): void
     {
-        /** @var \PHPUnit\Framework\MockObject\MockObject | Filesystem $filesystem */
+        /** @var MockObject $filesystem */
         $filesystem = $this->createMock(Filesystem::class);
         $filesystem->expects($this->once())->method("fileExists")->willReturn(true);
         $filesystem->expects($this->once())->method("isDir")->willReturn(true);
+        /** @var Filesystem $filesystem */
         new FilesystemRepository(new AbsPath($this->root->url()), $filesystem);
     }
     public function testConstructorWithNotDirParam(): void
     {
-        /** @var \PHPUnit\Framework\MockObject\MockObject | Filesystem $filesystem */
+        /** @var MockObject $filesystem */
         $filesystem = $this->createMock(Filesystem::class);
         $filesystem->expects($this->once())->method("fileExists")->willReturn(true);
         $filesystem->expects($this->once())->method("isDir")->willReturn(false);
         $this->expectException(InvalidArgumentException::class);
+        /** @var Filesystem $filesystem */
         new FilesystemRepository(new AbsPath($this->root->url()), $filesystem);
     }
     public function testConstructorWithNotExistParam(): void
     {
-        /** @var \PHPUnit\Framework\MockObject\MockObject | Filesystem $filesystem */
+        /** @var MockObject $filesystem */
         $filesystem = $this->createMock(Filesystem::class);
         $filesystem->expects($this->once())->method("fileExists")->willReturn(false);
         $this->expectException(InvalidArgumentException::class);
+        /** @var Filesystem $filesystem */
         new FilesystemRepository(new AbsPath($this->root->url()), $filesystem);
     }
     public function testGetContent(): void
@@ -58,10 +65,11 @@ class FilesystemRepositoryTest extends TestCase
 
         $repo = new FilesystemRepository($baseDirectoryPath, $this->filesystem);
 
-        /** @var \PHPUnit\Framework\MockObject\MockObject | FileInterface $file */
+        /** @var MockObject $file */
         $file = $this->createMock(FileInterface::class);
         $file->method("getUniqueName")->willReturn($uniqueFileName);
 
+        /** @var FileInterface $file */
         $content = $repo->getContent($file);
 
         $this->assertEquals($fileContent, $content);
@@ -69,12 +77,13 @@ class FilesystemRepositoryTest extends TestCase
 
     public function testGetContentWithDirFile(): void
     {
-        /** @var \PHPUnit\Framework\MockObject\MockObject | Filesystem $filesystem */
+        /** @var MockObject $filesystem */
         $filesystem = $this->createMock(Filesystem::class);
         $filesystem->expects($this->once())->method("getContent")->willReturn(null);
         $filesystem->expects($this->once())->method("fileExists")->willReturn(true);
         $filesystem->expects($this->once())->method("isDir")->willReturn(true);
 
+        /** @var Filesystem $filesystem */
         $repo = new FilesystemRepository(new AbsPath("."), $filesystem);
         $file = $this->createMock(FileInterface::class);
 
@@ -84,12 +93,13 @@ class FilesystemRepositoryTest extends TestCase
 
     public function testGetContentWithNotExistedFile(): void
     {
-        /** @var \PHPUnit\Framework\MockObject\MockObject | Filesystem $filesystem */
+        /** @var MockObject $filesystem */
         $filesystem = $this->createMock(Filesystem::class);
         $filesystem->expects($this->once())->method("getContent")->willReturn(null);
         $filesystem->expects($this->once())->method("fileExists")->willReturn(true);
         $filesystem->expects($this->once())->method("isDir")->willReturn(true);
 
+        /** @var Filesystem $filesystem */
         $repo = new FilesystemRepository(new AbsPath("."), $filesystem);
         $file = $this->createMock(FileInterface::class);
 
@@ -99,11 +109,12 @@ class FilesystemRepositoryTest extends TestCase
 
     public function testGetStream(): void
     {
-        /** @var \PHPUnit\Framework\MockObject\MockObject | Filesystem $filesystem */
+        /** @var MockObject $filesystem */
         $filesystem = $this->createMock(Filesystem::class);
         $filesystem->expects($this->once())->method("fileExists")->willReturn(true);
         $filesystem->expects($this->once())->method("isDir")->willReturn(true);
 
+        /** @var Filesystem $filesystem */
         $repo = new FilesystemRepository(new AbsPath("."), $filesystem);
         $stream = $repo->getStream();
         $this->assertInstanceOf(StreamInterface::class, $stream);

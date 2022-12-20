@@ -16,10 +16,12 @@ class FilesystemRepository implements SourceRepositoryInterface
     public function __construct(AbsPath $baseDirectoryPath, Filesystem $filesystem)
     {
         $this->filesystem = $filesystem;
-        if (!$this->filesystem->fileExists($baseDirectoryPath))
+        if (!$this->filesystem->fileExists($baseDirectoryPath)) {
             throw new InvalidArgumentException("base directory with path: $baseDirectoryPath not exist");
-        if (!$this->filesystem->isDir($baseDirectoryPath))
+        }
+        if (!$this->filesystem->isDir($baseDirectoryPath)) {
             throw new InvalidArgumentException("base dir path is not directory");
+        }
 
         $this->baseDirectoryPath = $baseDirectoryPath;
     }
