@@ -15,11 +15,14 @@
             "Supermetrolog\\SynchronizerFilesystemSourceRepo\\": "src/"
         }
     },
-    "authors": [{
-        "name": "supermetrolog",
-        "email": "billypro6@gmail.com"
-    }],
+    "authors": [
+        {
+            "name": "supermetrolog",
+            "email": "billypro6@gmail.com"
+        }
+    ],
     "require": {
+        "php": "^7.4",
         "supermetrolog/synchronizer": "^2.0"
     },
     "require-dev": {
