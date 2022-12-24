@@ -9,23 +9,26 @@ class AbsPath extends Path
 {
     public function __construct(string $path)
     {
-        $path = preg_replace('!\\\+!', "/", $path);
-        if (!is_string($path)) {
-            throw new LogicException("preg_replace return not string value");
-        }
-        if (mb_strlen($path) === 0) {
+        parent::__construct($path);
+        $this->normalizePath();
+    }
+    private function normalizePath(): void
+    {
+        if ($this->isEmpty()) {
             throw new InvalidArgumentException("asbsolute path cannot be empty");
         }
-        if ($path[mb_strlen($path) - 1] == "/") {
-            $path = substr($path, 0, -1);
+        if ($this->lastSymbolIsSlash()) {
+            $this->removeLastSlash();
         }
-
-        $this->path = $path;
     }
 
     public function addRelativePath(string $relPath): self
     {
         $path = $this . new RelPath($relPath);
         return new self($path);
+    }
+    private function removeLastSlash(): void
+    {
+        $this->path = mb_substr($this->path, 0, -1);
     }
 }

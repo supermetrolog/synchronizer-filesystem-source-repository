@@ -3,6 +3,7 @@
 namespace tests\unit;
 
 use InvalidArgumentException;
+use LogicException;
 use org\bovigo\vfs\vfsStream;
 use org\bovigo\vfs\vfsStreamDirectory;
 use PHPUnit\Framework\MockObject\MockObject;
@@ -79,32 +80,51 @@ class FilesystemRepositoryTest extends TestCase
     {
         /** @var MockObject $filesystem */
         $filesystem = $this->createMock(Filesystem::class);
-        $filesystem->expects($this->once())->method("getContent")->willReturn(null);
-        $filesystem->expects($this->once())->method("fileExists")->willReturn(true);
+        $fileExistsCalledCount = 0;
+        $filesystem
+            ->expects($this->exactly(2))
+            ->method("fileExists")
+            ->will($this->returnCallback(function () use (&$fileExistsCalledCount) {
+                $fileExistsCalledCount++;
+                if ($fileExistsCalledCount == 2) {
+                    return false;
+                }
+                return true;
+            }));
         $filesystem->expects($this->once())->method("isDir")->willReturn(true);
 
         /** @var Filesystem $filesystem */
         $repo = new FilesystemRepository(new AbsPath("."), $filesystem);
         $file = $this->createMock(FileInterface::class);
 
-        $content = $repo->getContent($file);
-        $this->assertNull($content);
+        /** @var MockObject $filesystem */
+        $this->expectException(LogicException::class);
+        $repo->getContent($file);
     }
 
     public function testGetContentWithNotExistedFile(): void
     {
         /** @var MockObject $filesystem */
         $filesystem = $this->createMock(Filesystem::class);
-        $filesystem->expects($this->once())->method("getContent")->willReturn(null);
-        $filesystem->expects($this->once())->method("fileExists")->willReturn(true);
+        $fileExistsCalledCount = 0;
+        $filesystem
+            ->expects($this->exactly(2))
+            ->method("fileExists")
+            ->will($this->returnCallback(function () use (&$fileExistsCalledCount) {
+                $fileExistsCalledCount++;
+                if ($fileExistsCalledCount == 2) {
+                    return false;
+                }
+                return true;
+            }));
         $filesystem->expects($this->once())->method("isDir")->willReturn(true);
 
         /** @var Filesystem $filesystem */
         $repo = new FilesystemRepository(new AbsPath("."), $filesystem);
         $file = $this->createMock(FileInterface::class);
 
-        $content = $repo->getContent($file);
-        $this->assertNull($content);
+        $this->expectException(LogicException::class);
+        $repo->getContent($file);
     }
 
     public function testGetStream(): void

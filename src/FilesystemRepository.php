@@ -3,6 +3,7 @@
 namespace Supermetrolog\SynchronizerFilesystemSourceRepo;
 
 use InvalidArgumentException;
+use LogicException;
 use Supermetrolog\Synchronizer\interfaces\FileInterface;
 use Supermetrolog\Synchronizer\interfaces\SourceRepositoryInterface;
 use Supermetrolog\Synchronizer\interfaces\StreamInterface;
@@ -33,10 +34,9 @@ class FilesystemRepository implements SourceRepositoryInterface
     public function getContent(FileInterface $file): ?string
     {
         $filename = $this->baseDirectoryPath->addRelativePath($file->getUniqueName());
-        try {
-            return $this->filesystem->getContent($filename);
-        } catch (\Throwable $th) {
-            return null;
+        if (!$this->filesystem->fileExists($filename)) {
+            throw new LogicException("file not found");
         }
+        return $this->filesystem->getContent($filename);
     }
 }
