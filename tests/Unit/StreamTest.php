@@ -25,10 +25,12 @@ class StreamTest extends TestCase
 
     private function generateFiles(): void
     {
-
-        $this->root = vfsStream::setup();
+        $this->root = vfsStream::setup('root');
         $dir1 = vfsStream::newDirectory("dir1");
-        $dir1->addChild(vfsStream::newFile("file1.txt")->setContent("fuck the police"));
+        $dir1->addChild(
+            vfsStream::newFile("file1.txt")
+                ->setContent("fuck the police")
+        );
         $dir1->addChild(vfsStream::newFile("file2.txt")->setContent("fuck the police suka"));
         $dir1_1 = vfsStream::newDirectory("dir1_1");
         $dir1_1->addChild(vfsStream::newFile("file1_1.jpg")->setContent("fuck the police jpg"));
@@ -84,5 +86,38 @@ class StreamTest extends TestCase
             hash_file("md5", $this->root->getChild('file_suka.txt')->url()),
             $files[7]->getHash()
         );
+    }
+
+    public function testRedWithIsNotReadableFile(): void
+    {
+
+        $this->root->addChild(vfsStream::newFile(
+            "file_not_readable.sock",
+            0000
+        ));
+
+        $stream = new Stream(new AbsPath($this->root->url()), $this->filesystem);
+
+        /** @var FileInterface[] $files */
+        $files = [];
+        foreach ($stream->read() as $file) {
+            $files[] = $file;
+        }
+
+        $stream = new Stream(new AbsPath($this->root->url()), $this->filesystem);
+
+
+        /** @param FileInterface $elem */
+        $notReadableFile = array_search(
+            "/file_not_readable.sock",
+            array_map(
+                function ($elem) {
+                    return $elem->getUniqueName();
+                },
+                $files
+            )
+        );
+
+        $this->assertFalse($notReadableFile);
     }
 }

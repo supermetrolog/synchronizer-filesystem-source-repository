@@ -78,4 +78,9 @@ class Filesystem
     {
         return is_resource($handle);
     }
+
+    public function isReadable(string $filename): bool
+    {
+        return is_readable($filename);
+    }
 }

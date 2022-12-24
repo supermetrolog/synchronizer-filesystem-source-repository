@@ -33,6 +33,9 @@ class Stream implements StreamInterface
         $handle = $this->filesystem->openDir($dirpath);
         $this->lastHandle = &$handle;
         while ($filename = $this->filesystem->readDir($handle)) {
+            if (!$this->filesystem->isReadable($dirpath . "/$filename")) {
+                continue;
+            }
             $file = $this->createFile($filename, $dirpath, $parent);
             if (
                 $file->isDir() &&
