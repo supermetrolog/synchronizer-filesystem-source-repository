@@ -80,26 +80,22 @@ class FilesystemRepositoryTest extends TestCase
     {
         /** @var MockObject $filesystem */
         $filesystem = $this->createMock(Filesystem::class);
-        $fileExistsCalledCount = 0;
         $filesystem
-            ->expects($this->exactly(2))
+            ->expects($this->once())
             ->method("fileExists")
-            ->will($this->returnCallback(function () use (&$fileExistsCalledCount) {
-                $fileExistsCalledCount++;
-                if ($fileExistsCalledCount == 2) {
-                    return false;
-                }
-                return true;
-            }));
+            ->willReturn(true);
         $filesystem->expects($this->once())->method("isDir")->willReturn(true);
 
         /** @var Filesystem $filesystem */
         $repo = new FilesystemRepository(new AbsPath("."), $filesystem);
-        $file = $this->createMock(FileInterface::class);
 
-        /** @var MockObject $filesystem */
-        $this->expectException(LogicException::class);
-        $repo->getContent($file);
+        /** @var MockObject $file */
+        $file = $this->createMock(FileInterface::class);
+        $file->expects($this->once())->method('isDir')->willReturn(true);
+
+        /** @var FileInterface $file */
+        $content = $repo->getContent($file);
+        $this->assertNull($content);
     }
 
     public function testGetContentWithNotExistedFile(): void

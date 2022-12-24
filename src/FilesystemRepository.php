@@ -34,6 +34,9 @@ class FilesystemRepository implements SourceRepositoryInterface
     public function getContent(FileInterface $file): ?string
     {
         $filename = $this->baseDirectoryPath->addRelativePath($file->getUniqueName());
+        if ($file->isDir()) {
+            return null;
+        }
         if (!$this->filesystem->fileExists($filename)) {
             throw new LogicException("file not found");
         }
