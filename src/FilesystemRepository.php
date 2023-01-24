@@ -14,7 +14,13 @@ class FilesystemRepository implements SourceRepositoryInterface
     private AbsPath $baseDirectoryPath;
     private Filesystem $filesystem;
 
-    public function __construct(AbsPath $baseDirectoryPath, Filesystem $filesystem)
+    /** @var string[] $except */
+    private array $except;
+
+    /**
+     *  @param string[] $except
+     */
+    public function __construct(AbsPath $baseDirectoryPath, Filesystem $filesystem, array $except = [])
     {
         $this->filesystem = $filesystem;
         if (!$this->filesystem->fileExists($baseDirectoryPath)) {
@@ -25,11 +31,12 @@ class FilesystemRepository implements SourceRepositoryInterface
         }
 
         $this->baseDirectoryPath = $baseDirectoryPath;
+        $this->except = $except;
     }
 
     public function getStream(): StreamInterface
     {
-        return new Stream($this->baseDirectoryPath, $this->filesystem);
+        return new Stream($this->baseDirectoryPath, $this->filesystem, $this->except);
     }
     public function getContent(FileInterface $file): ?string
     {

@@ -88,7 +88,7 @@ class StreamTest extends TestCase
         );
     }
 
-    public function testRedWithIsNotReadableFile(): void
+    public function testReedWithIsNotReadableFile(): void
     {
 
         $this->root->addChild(vfsStream::newFile(
@@ -104,9 +104,6 @@ class StreamTest extends TestCase
             $files[] = $file;
         }
 
-        $stream = new Stream(new AbsPath($this->root->url()), $this->filesystem);
-
-
         /** @param FileInterface $elem */
         $notReadableFile = array_search(
             "/file_not_readable.sock",
@@ -118,6 +115,59 @@ class StreamTest extends TestCase
             )
         );
 
+        $this->assertCount(8, $files);
         $this->assertFalse($notReadableFile);
+    }
+
+    public function testReedWithExceptConfig(): void
+    {
+        $this->root->addChild(vfsStream::newFile(
+            "excepted_file.txt",
+            0777
+        ));
+
+        $stream = new Stream(
+            new AbsPath($this->root->url()),
+            $this->filesystem,
+            ['excepted_file.txt', 'dir1/file1.txt', 'dir1']
+        );
+
+        /** @var FileInterface[] $files */
+        $files = [];
+        foreach ($stream->read() as $file) {
+            $files[] = $file;
+        }
+        /** @param FileInterface $elem */
+        $exceptedFile = array_search(
+            "/excepted_file.txt",
+            array_map(
+                function ($elem) {
+                    return $elem->getUniqueName();
+                },
+                $files
+            )
+        );
+        $exceptedFile2 = array_search(
+            "/dir1/file1.txt",
+            array_map(
+                function ($elem) {
+                    return $elem->getUniqueName();
+                },
+                $files
+            )
+        );
+        $exceptedDir = array_search(
+            "/dir1",
+            array_map(
+                function ($elem) {
+                    return $elem->getUniqueName();
+                },
+                $files
+            )
+        );
+        $this->assertCount(2, $files);
+        $this->assertFalse($exceptedFile);
+        $this->assertFalse($exceptedFile2);
+        $this->assertFalse($exceptedDir);
     }
 }

@@ -12,14 +12,20 @@ class Stream implements StreamInterface
 {
     private AbsPath $dirpath;
     private Filesystem $filesystem;
+    /** @var string[] $except */
+    private array $except = [];
 
     /** @var resource $lastHandle */
     private $lastHandle;
 
-    public function __construct(AbsPath $dirpath, Filesystem $filesystem)
+    /**
+     * @param string[] $except
+     */
+    public function __construct(AbsPath $dirpath, Filesystem $filesystem, array $except = [])
     {
         $this->dirpath = $dirpath;
         $this->filesystem = $filesystem;
+        $this->except = $except;
     }
     /**
      * @return Generator<File>
@@ -33,6 +39,9 @@ class Stream implements StreamInterface
         $handle = $this->filesystem->openDir($dirpath);
         $this->lastHandle = &$handle;
         while ($filename = $this->filesystem->readDir($handle)) {
+            if ($this->isExceptFile($dirpath . "/$filename")) {
+                continue;
+            }
             if (!$this->filesystem->isReadable($dirpath . "/$filename")) {
                 continue;
             }
@@ -79,7 +88,16 @@ class Stream implements StreamInterface
         $relPath = $file->isDir() ? $file->getUniqueName() : $file->getRelPath();
         return $this->dirpath->addRelativePath($relPath);
     }
-
+    public function isExceptFile(string $filename): bool
+    {
+        foreach ($this->except as $eFilename) {
+            $fullname = $this->dirpath . "/$eFilename";
+            if ($fullname == $filename) {
+                return true;
+            }
+        }
+        return false;
+    }
     public function __destruct()
     {
         if ($this->filesystem->isResource($this->lastHandle)) {

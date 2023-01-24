@@ -3,7 +3,6 @@
 namespace Supermetrolog\SynchronizerFilesystemSourceRepo\path;
 
 use LogicException;
-use InvalidArgumentException;
 
 abstract class Path
 {
